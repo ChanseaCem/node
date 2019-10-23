@@ -1,3 +1,13 @@
+/**
+ * Project:boen项目
+ * Name：nodejs-websocket后端服务器-分屏服务
+ * Dddress：惠州
+ * Date：2019-10-23
+ * 匹配github项目：JTECH-CNC-BOEN boen-third
+ * Description:J-TACH-CNC boen项目告警和品质分屏服务
+ * 
+ */
+
 var ws = require("nodejs-websocket")
 var AllUserData = new Array();
 var port = 3000;

@@ -1,10 +1,11 @@
 /**
+ * Project:boen项目
  * Name：nodejs-websocket后端服务器
  * Dddress：惠州
  * Technology：three.js
  * Date：2019-10-19
- * Description:J-TACH-CNC boen项目3d后端
  * 匹配github项目：JTECH-CNC-BOEN boen-third
+ * Description:J-TACH-CNC boen项目3d后端
  */
 
 var ws = require("nodejs-websocket")
