@@ -120,8 +120,7 @@ var server = ws.createServer(function(conn) {
 	})
 	conn.on("close", function(code, reason) {
 		console.log("Connection closed")
-		// 当用户退出的时候捕捉到退出的用 
-		户
+		// 当用户退出的时候捕捉到退出的用户
 		for(var i = 0; i < AllUserData.length; i++) {
 			console.log(AllUserData[i].ws)
 			if(AllUserData[i].name == conn.name) {
