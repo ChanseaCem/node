@@ -110,6 +110,7 @@ var server = ws.createServer(function(conn) {
 		obj.StatusMsg = all[r].text;
 
 		obj.CreateTime = new Date();
+		obj.DataType = 1;//用以判断在非当前3d的iframe（客户端），也能持续刷新3d视图
 
 		console.log(obj)
 
