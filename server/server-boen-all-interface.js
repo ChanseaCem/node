@@ -29,7 +29,7 @@ var app = connect()
 	})
 	.use('/DetectAlarm', function(req, res, next) {
 		console.log(req.body);
-		var data1 = {
+		var data2 = {
 			"IsSuccess": true,
 			"Extensions": "",
 			"Value": [{
@@ -378,7 +378,7 @@ var app = connect()
 			}]
 		}
 		
-		var data = {
+		var data1 = {
 			"IsSuccess": true,
 			"Extensions": "",
 			"Value": [{
@@ -537,9 +537,70 @@ var app = connect()
 				"CreateTime": "2019-10-25T08:43:25"
 			}]
 		};
+		
+		var data = {
+			"IsSuccess": true,
+			"Extensions": "",
+			"Value": [{
+				"ID": "30e0b54907a045cea5a22b8c5b1d8f14",
+				"MachineCode": "M230",
+				"ProductCode": "C07-YN-CNC2_1",
+				"AlarmType": 6,
+				"Content": "MIC孔底倒角，检测值连续NG；MIC孔正面倒角，检测值连续NG；MIC孔直径，检测值连续NG；外形长2，检测值连续NG；平台定位-X，检测值连续NG；O孔底倒角，检测值连续NG；O孔正面倒角，检测值连续NG；",
+				"CreateTime": "2019-10-25T08:44:28"
+			}, {
+				"ID": "3c2f2085dc4043aea58866040390bfd4",
+				"MachineCode": "M229",
+				"ProductCode": "C07-YN-CNC2_1",
+				"AlarmType": 6,
+				"Content": "MIC孔底倒角，检测值连续NG；MIC孔正面倒角，检测值连续NG；MIC孔直径，检测值连续NG；外形长2，检测值连续NG；平台定位-X，检测值连续NG；平台长，检测值持续上升；O孔底倒角，检测值连续NG；O孔正面倒角，检测值连续NG；",
+				"CreateTime": "2019-10-25T08:44:24"
+			}, {
+				"ID": "333aa9c7d7a944f98e81f7fef5b289eb",
+				"MachineCode": "M228",
+				"ProductCode": "C07-YN-CNC2_1",
+				"AlarmType": 6,
+				"Content": "MIC孔底倒角，检测值连续NG；MIC孔正面倒角，检测值连续NG；MIC孔直径，检测值连续NG；外形长2，检测值连续NG；平台定位-X，检测值连续NG；平台长，检测值持续下降；O孔底倒角，检测值连续NG；O孔正面倒角，检测值连续NG；",
+				"CreateTime": "2019-10-25T08:44:21"
+			}, {
+				"ID": "9eeab06566144d64bf78bb043a343bce",
+				"MachineCode": "M227",
+				"ProductCode": "C07-YN-CNC2_1",
+				"AlarmType": 6,
+				"Content": "MIC孔底倒角，检测值连续NG；MIC孔正面倒角，检测值连续NG；MIC孔直径，检测值连续NG；外形长2，检测值持续下降；平台定位-X，检测值连续NG；O孔底倒角，检测值连续NG；O孔正面倒角，检测值连续NG；",
+				"CreateTime": "2019-10-25T08:44:19"
+			}, {
+				"ID": "f4edeb04305d4d7b9ddfbb3f60c4e6c7",
+				"MachineCode": "M226",
+				"ProductCode": "C07-YN-CNC2_1",
+				"AlarmType": 6,
+				"Content": "MIC孔底倒角，检测值连续NG；MIC孔正面倒角，检测值连续NG；MIC孔直径，检测值连续NG；外形长2，检测值持续下降；平台定位-X，检测值连续NG；平台长，检测值持续上升；O孔底倒角，检测值连续NG；O孔正面倒角，检测值连续NG；",
+				"CreateTime": "2019-10-25T08:44:16"
+			}, {
+				"ID": "bfbaeae4949b4093a47582b5b60a0335",
+				"MachineCode": "M225",
+				"ProductCode": "C07-YN-CNC2_1",
+				"AlarmType": 6,
+				"Content": "MIC孔底倒角，检测值连续NG；MIC孔正面倒角，检测值连续NG；MIC孔直径，检测值连续NG；外形长2，检测值持续下降；平台定位-X，检测值连续NG；O孔底倒角，检测值连续NG；O孔正面倒角，检测值连续NG；",
+				"CreateTime": "2019-10-25T08:44:13"
+			}]
+		};
+		
+		var data3 = {
+			"IsSuccess": true,
+			"Extensions": "",
+			"Value": []
+		};
+		
+		var data4 = {
+			"IsSuccess": false,
+			"Extensions": "",
+			"Value": []
+		};
+				
 		var r = Math.random();
 		console.log(r)
-		var senddata = r > 0.5 ? data : data1;
+		var senddata = r > 0.8 ? data : (r > 0.6 ? data1 : (r > 0.4 ? data2 : (r > 0.2 ? data3 : data4)));
 		res.end(JSON.stringify(senddata));
 		next();
 	})
