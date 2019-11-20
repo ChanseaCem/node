@@ -1,3 +1,14 @@
+/**
+ * Project:boen项目
+ * Name：nodejs-websocket后端服务器
+ * Dddress：泉州
+ * Technology：
+ * Date：2019-11-20
+ * 匹配github项目：JTECH-CNC-BOEN boen-third
+ * Description:J-TACH-CNC boen项目 后端（目前只有几个接口）
+ */
+
+
 /**Connect是一个node中间件（middleware）框架。
 如果把一个http处理过程比作是污水处理，中间件就像是一层层的过滤网。
 每个中间件在http处理过程中通过改写request或（和）response的数据、状态，实现了特定的功能。
@@ -5,6 +16,14 @@
 
 var connect = require('connect'); //创建连接
 var bodyParser = require('body-parser'); //body解析
+var util = require('util'); //url.parse 方法来解析 URL 中的参数
+var mysql = require('mysql'); //mysql
+var connection = mysql.createConnection({
+	host: 'localhost',
+	user: 'root',
+	password: '123456',
+	database: 'glass_min'
+});
 var port = 3009;
 
 var app = connect()
@@ -27,8 +46,33 @@ var app = connect()
 		}); //utf-8转码
 		next(); //next 方法就是一个递归调用
 	})
+	//3d,获取设备列表
+	.use('/Machine/GetMachineList', function(req, res, next) {
+		console.log("[3d,获取设备列表]:");
+		console.log(req.url);
+		var sql = "SELECT * FROM `test_3d_maclist`"
+		conQueryData(sql, newres(), res, next());
+	})
+	//登录
+	.use('/User/Login', function(req, res, next) {
+		console.log("[登录]:");
+		console.log(req.url);
+		var username = getUrlParam(req.url).name;
+		var result = {
+			"IsSuccess": true,
+			"msg": "success",
+			"Value": {
+				"Sex": 1,
+				"UserCode": "kanban",
+				"UserName": "看板"
+			}
+		}
+		res.end(JSON.stringify(result));
+		next();
+	})
+	//告警
 	.use('/DetectAlarm', function(req, res, next) {
-		console.log(req.body);
+		console.log(req.url);
 		var data2 = {
 			"IsSuccess": true,
 			"Extensions": "",
@@ -377,7 +421,7 @@ var app = connect()
 				"CreateTime": "2019-10-25T08:42:04"
 			}]
 		}
-		
+
 		var data1 = {
 			"IsSuccess": true,
 			"Extensions": "",
@@ -537,7 +581,7 @@ var app = connect()
 				"CreateTime": "2019-10-25T08:43:25"
 			}]
 		};
-		
+
 		var data = {
 			"IsSuccess": true,
 			"Extensions": "",
@@ -585,35 +629,79 @@ var app = connect()
 				"CreateTime": "2019-10-25T08:44:13"
 			}]
 		};
-		
+
 		var data3 = {
 			"IsSuccess": true,
 			"Extensions": "",
 			"Value": []
 		};
-		
+
 		var data4 = {
 			"IsSuccess": false,
 			"Extensions": "",
 			"Value": []
 		};
-				
+
 		var r = Math.random();
 		console.log(r)
 		var senddata = r > 0.8 ? data : (r > 0.6 ? data1 : (r > 0.4 ? data2 : (r > 0.2 ? data3 : data4)));
-		res.end(JSON.stringify(senddata));
+		res.end(JSON.stringify(data1));
 		next();
 	})
-	.use('/login', function(req, res, next) {
-		console.log(req.body);
-		
-		var result = {
-			"code": "",
-			"msg": "",
-			"data": []
-		};
-		res.end(JSON.stringify(result));
-		next();
-	})
-	.listen(port); 
+	.listen(port);
 console.log('Server started on port ' + port + '.');
+
+/**
+ * 获取地址携带参数
+ */
+function getUrlParam(url) {
+	var theRequest = new Object();
+	if(url.indexOf("?") != -1) {
+		var str = url.substr(1);
+		strs = str.split("&");
+		for(var i = 0; i < strs.length; i++) {
+			theRequest[strs[i].split("=")[0]] = unescape(strs[i].split("=")[1]);
+		}
+	}
+	return theRequest;
+}
+
+/**
+ * sql操作
+ * @param {String} sql
+ */
+function conQueryData(sql, result, res, fun) {
+	connection.query(sql, function(error, results, fields) {
+		if(error) throw error;
+		result.data = results;
+		result.Value = results;
+		res.end(JSON.stringify(result));
+		fun;
+	});
+}
+
+/**
+ * 返回数据
+ * @param {Object} data
+ */
+function newres(data) {
+	return result = {
+		"IsSuccess": true,
+		"Value": data,
+		"code": 200,
+		"msg": "success",
+		"data": data
+	}
+}
+
+/**
+ * 判断string是否为空
+ * @param {String} obj
+ */
+function isnull(obj) {
+	if(typeof obj == "undefined" || obj == undefined || obj == null || obj == "") {
+		return true;
+	} else {
+		return false;
+	}
+}
