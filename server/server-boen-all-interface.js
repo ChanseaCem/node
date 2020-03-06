@@ -70,6 +70,29 @@ var app = connect()
 		res.end(JSON.stringify(result));
 		next();
 	})
+	
+	//6.3 获取刀具规格列表
+	.use('/api/MacToolDetectData/GetToolSpecList', function(req, res, next) {
+		console.log("[获取刀具规格列表]:");
+		console.log(req.url);
+		var sql = "SELECT ID,SpecCode,SpecName,SpecType FROM `boen_daojumotoushuju_list`"
+		conQueryData(sql, newres(), res, next());
+	})
+	
+	//6.4 获取刀具规格详情
+	.use('/api/MacToolDetectData/GetToolSpec', function(req, res, next) {
+		console.log("[获取刀具规格详情]:");
+		console.log(getUrlParam(req.url).id);
+		var sql = 'SELECT SpecName,Manufacturer,Batch FROM `boen_daojumotoushuju_list` WHERE id = "'+ getUrlParam(req.url).id +'"'
+		conQueryObj(sql, newres(), res, next());
+	})
+	//6.5获取刀具规格检测数据最新一条
+//	.use('/api/MacToolDetectData/GetMacToolDetectionLast', function(req, res, next) {
+//		console.log("[5获取刀具规格检测数据最新一条]:");
+//		console.log(req.url);
+//		var sql = "SELECT ID,SpecCode,SpecName,SpecType,Manufacturer,Batch FROM `boen_daojumotoushuju_list`"
+//		conQueryData(sql, newres(), res, next());
+//	})
 	//告警
 	.use('/DetectAlarm', function(req, res, next) {
 		console.log(req.url);
@@ -657,7 +680,7 @@ console.log('Server started on port ' + port + '.');
 function getUrlParam(url) {
 	var theRequest = new Object();
 	if(url.indexOf("?") != -1) {
-		var str = url.substr(1);
+		var str = url.split("?")[1];
 		strs = str.split("&");
 		for(var i = 0; i < strs.length; i++) {
 			theRequest[strs[i].split("=")[0]] = unescape(strs[i].split("=")[1]);
@@ -675,6 +698,20 @@ function conQueryData(sql, result, res, fun) {
 		if(error) throw error;
 		result.data = results;
 		result.Value = results;
+		res.end(JSON.stringify(result));
+		fun;
+	});
+}
+
+/**
+ * sql操作 返回结果result.data/result.Value为obj对象
+ * @param {String} sql
+ */
+function conQueryObj(sql, result, res, fun) {
+	connection.query(sql, function(error, results, fields) {
+		if(error) throw error;
+		result.data = results[0];
+		result.Value = results[0];
 		res.end(JSON.stringify(result));
 		fun;
 	});

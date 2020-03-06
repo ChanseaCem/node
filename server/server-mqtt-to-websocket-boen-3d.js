@@ -121,7 +121,22 @@ var server = ws.createServer(function(conn) {
 	}, 1000);
 
 	conn.on("text", function(str) {
+		//当前端发消息给后端，后端进行返回数据（锁机解锁）
+		console.log(str)
+		if(str.indexOf("MacLock") > -1) {
+			var obj = new Object();
+			var len_code = mac_code_arr.length - 1;
+			var random_code = mac_code_arr[Math.round(Math.random() * len_code)];
+			obj.MachineCode = random_code;
 
+			obj.Result = Math.random() > 0.5 ? 1 : 0;
+
+			var o = new Object();
+			o.Value = obj;
+			o.DataType = 2; //用以反馈锁机-解锁
+
+			AllUserData[0].sendText(JSON.stringify(o))
+		}
 	})
 	conn.on("close", function(code, reason) {
 		console.log("Connection closed")
