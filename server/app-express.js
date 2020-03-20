@@ -43,11 +43,27 @@ app.get('/', function(req, res) {
 	res.send('请求home成功');
 })
 
-//模板
+//模板 post
 app.post('/user/login/test', (req, res) => {
 	var name = req.body.username;
 	var passwd = req.body.password;
-	var userStr = `select * from user where username="${name}" and password="${passwd}"`;
+	var userStr = `select * from login where username="${name}" and password="${passwd}"`;
+
+	connection.query(userStr, function(err, result) {
+		if(err) {
+			throw err;
+		} else {
+			res.send(result)
+		}
+	})
+})
+
+//模板 get
+app.get('/user/login/test', (req, res) => {
+	var username = getUrlParam(req.url).username;
+	var password = getUrlParam(req.url).password;
+	var userStr = `select * from login where username="${username}" and password="${password}"`;
+
 	connection.query(userStr, function(err, result) {
 		if(err) {
 			throw err;
@@ -70,7 +86,7 @@ app.get('/User/Login', (req, res) => {
 		}
 	}
 	res.send(result);
-	
+
 })
 
 app.listen(port, () => {
