@@ -29,11 +29,12 @@ app.use(bodyParser.json()) //JSON解析
 	.use(function(req, res, next) {
 		//跨域处理
 		// Website you wish to allow to connect
-		res.setHeader('Access-Control-Allow-Origin', '*'); //允许任何源
+		res.setHeader('Access-Control-Allow-Origin', req.headers.origin||"http://localhost:3001"); //允许任何源*，这里指定源
 		// Request methods you wish to allow
 		res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE'); //允许任何方法
 		// Request headers you wish to allow
 		res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type,X-Session-Token'); //允许任何类型
+		res.setHeader('Access-Control-Allow-Credentials','true'); //是否允许后续请求携带认证信息（cookies）,该值只能是true,否则不返回
 		res.writeHead(200, {
 			"Content-Type": "text/plain;charset=utf-8"
 		}); //utf-8转码
