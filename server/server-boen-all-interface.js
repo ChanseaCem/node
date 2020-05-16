@@ -115,19 +115,51 @@ var boenAll = function() {
 				res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE'); //允许任何方法
 				// Request headers you wish to allow
 				res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type,X-Session-Token'); //允许任何类型
+				res.setHeader('Access-Control-Allow-Credentials','true'); //是否允许后续请求携带认证信息（cookies）,该值只能是true,否则不返回
 				res.writeHead(200, {
 					"Content-Type": "text/plain;charset=utf-8"
 				}); //utf-8转码
 				next(); //next 方法就是一个递归调用
 			})
-			//3d,获取设备列表
+			//1.1 获取产品
+			.use('/api/Product/GetProductList', function(req, res, next) {
+				console.log("[获取产品]:");
+
+				var sql = 'SELECT * FROM `boen_getproductList`';
+				common.conQueryData(sql, common.newres(), res, next());
+			})
+			//1.2 3d,获取设备列表
 			.use('/api/Machine/GetMachineList', function(req, res, next) {
-				console.log("1[3d,获取设备列表]:");
+				console.log("[3d,获取设备列表]:");
 				console.log(req.url);
 				var sql = "SELECT * FROM `test_3d_maclist`"
 				common.conQueryData(sql, common.newres(), res, next());
 			})
-			//登录
+			//1.4 工艺对应关系
+			.use('/api/MacProduct/GetMacProPositon', function(req, res, next) {
+				console.log("[工艺对应关系]:");
+
+				var proCode = utils.getUrlParam(req.url).proCode
+				console.log(proCode);
+
+				var sql = 'SELECT * FROM `boen_gongyiduiyingguanxi` where prodCode = "' + proCode + '"'
+				common.conQueryData(sql, common.newres(), res, next());
+			})
+			//1.6 获取设备型号、负责人、产品信息
+			.use('/api/Machine/GetMachineInfo', function(req, res, next) {
+				console.log("[获取设备型号、负责人、产品信息]:");
+				console.log(utils.getUrlParam(req.url).maccode);
+
+				var maccode = utils.getUrlParam(req.url).maccode
+				if(!utils.isnull(maccode)) {
+					var sql = 'SELECT * FROM `boen_mac_about` WHERE Code = "' + maccode + '"'
+					common.conQueryObj(sql, common.newres(), res, next());
+				}else{
+					var sql = 'SELECT * FROM `boen_mac_about` WHERE Code = "M1"'
+					common.conQueryObj(sql, common.newres(), res, next());
+				}
+			})
+			//1.7  登录
 			.use('/api/User/Login', function(req, res, next) {
 				console.log("[登录]:");
 				console.log(req.url);
@@ -144,45 +176,37 @@ var boenAll = function() {
 				res.end(JSON.stringify(result));
 				next();
 			})
-			//6.3 获取刀具规格列表
+			//1.12  获取刀具规格列表
 			.use('/api/MacToolDetectData/GetToolSpecList', function(req, res, next) {
-				console.log("2[获取刀具规格列表]:");
+				console.log("[获取刀具规格列表]:");
 				console.log(req.url);
 				var sql = "SELECT ID,SpecCode,SpecName,SpecType FROM `boen_daojumotoushuju_list`"
 				common.conQueryData(sql, common.newres(), res, next());
 			})
-			//6.4 获取刀具规格详情
+			//1.13 获取刀具规格详情
 			.use('/api/MacToolDetectData/GetToolSpec', function(req, res, next) {
-				console.log("3[获取刀具规格详情]:");
+				console.log("[获取刀具规格详情]:");
 				console.log(utils.getUrlParam(req.url).id);
 				var sql = 'SELECT SpecName,Manufacturer,Batch FROM `boen_daojumotoushuju_list` WHERE id = "' + utils.getUrlParam(req.url).id + '"'
 				common.conQueryObj(sql, common.newres(), res, next());
 			})
-			//设备页面-告警前几条
-			.use('/api/Machine/GetMachineAlarmTop', function(req, res, next) {
-				console.log("4[设备页面-告警前几条]:");
-				console.log(utils.getUrlParam(req.url).maccode);
-				console.log(utils.getUrlParam(req.url).topcount);
-
-				var maccode = utils.getUrlParam(req.url).maccode
-				var topcount = utils.getUrlParam(req.url).topcount
-				if(!utils.isnull(maccode)) {
-					var sql = 'SELECT MachineCode,StatusCode,StatusMsg,StatusTime,IntervalTime FROM `boen_alarm_deviceInfo` WHERE MachineCode = "' + maccode + '"'
-					common.conQueryData(sql, common.newres(), res, next());
-				}
+			//1.14 刀具磨头数据 页面 - 获取刀具规格检测数据最新一条
+			.use('/api/MacToolDetectData/GetMacToolDetectionLast', function(req, res, next) {
+				console.log("[获取刀具规格检测数据最新一条]:");
+				console.log(req.url);
+				var sql = "SELECT ID,SpecCode,SpecName,SpecType,Manufacturer,Batch FROM `boen_daojumotoushuju_list`"
+				common.conQueryData(sql, common.newres(), res, next());
 			})
-			//获取设备型号、负责人、产品信息
-			.use('/api/Machine/GetMachineInfo', function(req, res, next) {
-				console.log("5[获取设备型号、负责人、产品信息]:");
-				console.log(utils.getUrlParam(req.url).maccode);
+			//2.1 告警页面-告警内容
+			.use('/api/DetectAlarm/GetDetectAlarmList', function(req, res, next) {
+				var para = utils.getUrlParam(req.url);
+				console.log("[告警页面-告警内容]:",para.timetype,para.alarmtype);
 
-				var maccode = utils.getUrlParam(req.url).maccode
-				if(!utils.isnull(maccode)) {
-					var sql = 'SELECT * FROM `boen_mac_about` WHERE Code = "' + maccode + '"'
-					common.conQueryObj(sql, common.newres(), res, next());
-				}
+				var r = Math.random() * 48;
+				var sql = 'SELECT * FROM `boen-gaojing-gaojingneirong` WHERE idlist < ' + r;
+				common.conQueryData(sql, common.newres(), res, next());
 			})
-			//获取进度条数据
+			//2.4 获取进度条数据
 			.use('/api/MacStatus/GetMacStatusList', function(req, res, next) {
 				console.log("[获取进度条数据]:");
 				console.log(utils.getUrlParam(req.url).maccode);
@@ -241,24 +265,26 @@ var boenAll = function() {
 						res.end(JSON.stringify(common.newres(segs)));
 						next()
 					});
+				} else {
+					var sql = 'SELECT * FROM `boen_jindutiao` WHERE MCode = "M282"'
+					common.conQueryData(sql, common.newres(), res, next());
 				}
 			})
-			//6.5刀具磨头数据 页面 - 获取刀具规格检测数据最新一条
-			.use('/api/MacToolDetectData/GetMacToolDetectionLast', function(req, res, next) {
-				console.log("6[获取刀具规格检测数据最新一条]:");
-				console.log(req.url);
-				var sql = "SELECT ID,SpecCode,SpecName,SpecType,Manufacturer,Batch FROM `boen_daojumotoushuju_list`"
-				common.conQueryData(sql, common.newres(), res, next());
-			})
-			//告警页面-告警内容
-			.use('/api/DetectAlarm/GetDetectAlarmList', function(req, res, next) {
-				console.log("7[告警页面-告警内容]:");
-				console.log(utils.getUrlParam(req.url).timetype);
-				console.log(utils.getUrlParam(req.url).alarmtype);
+			//2.5设备页面-告警前几条
+			.use('/api/Machine/GetMachineAlarmTop', function(req, res, next) {
+				console.log("[设备页面-告警前几条]:");
+				console.log(utils.getUrlParam(req.url).maccode);
+				console.log(utils.getUrlParam(req.url).topcount);
 
-				var r = Math.random() * 48;
-				var sql = 'SELECT * FROM `boen-gaojing-gaojingneirong` WHERE idlist < ' + r;
-				common.conQueryData(sql, common.newres(), res, next());
+				var maccode = utils.getUrlParam(req.url).maccode
+				var topcount = utils.getUrlParam(req.url).topcount
+				if(!utils.isnull(maccode)) {
+					var sql = 'SELECT MachineCode,StatusCode,StatusMsg,StatusTime,IntervalTime FROM `boen_alarm_deviceInfo` WHERE MachineCode = "' + maccode + '"'
+					common.conQueryData(sql, common.newres(), res, next());
+				}else{
+					var sql = 'SELECT MachineCode,StatusCode,StatusMsg,StatusTime,IntervalTime FROM `boen_alarm_deviceInfo` WHERE MachineCode = "M282"'
+					common.conQueryData(sql, common.newres(), res, next());
+				}
 			})
 			.listen(_this.portOfAjax);
 		console.log('Server started on port ' + _this.portOfAjax + '.');
@@ -430,7 +456,7 @@ var boenAll = function() {
 									"PubTime": Math.random() > 0.5 ? "1970-01-19 16:22:33" : "2000-01-19 10:12:13"
 								}
 							}
-							_this.AllUserData[0].sendText(JSON.stringify(DataType8))
+							if(_this.AllUserData[0]) _this.AllUserData[0].sendText(JSON.stringify(DataType8))
 						}, 1000)
 						_this.AllUserData[0].sendText(JSON.stringify(DataType10))
 						_this.AllUserData[0].sendText(JSON.stringify(DataType11))
