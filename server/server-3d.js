@@ -1,7 +1,7 @@
 /**
  * Project:boen项目 汇聚部分
  * Name：nodejs-websocket后端服务器-3d服务
- * Dddress：泉州
+ * Address：泉州
  * Date：2019-11-20
  * 匹配github项目：J-TECH-CNC-webshow2
  * Description:J-TACH-CNC boen项目 汇聚部分 3d车间布局数据获取服务
