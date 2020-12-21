@@ -235,6 +235,13 @@ var boenAll = function() {
 				var sql = "SELECT ID,SpecCode,SpecName,SpecType,Manufacturer,Batch FROM `boen_daojumotoushuju_list`"
 				common.conQueryData(sql, common.newres(), res, next());
 			})
+			//1.16 产品状态列表
+			.use('/api/Machine/GetProList', function(req, res, next) {
+				console.log("[产品状态列表]:");
+				console.log(req.url);
+				var sql = "SELECT * FROM `mac_list`"
+				common.conQueryData(sql, common.newres(), res, next());
+			})
 			//2.1 告警页面-告警内容
 			.use('/api/DetectAlarm/GetDetectAlarmList', function(req, res, next) {
 				var para = utils.getUrlParam(req.url);
