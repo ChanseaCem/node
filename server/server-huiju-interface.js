@@ -593,13 +593,17 @@ var huijuAll = function() {
 			//2.43 修改机台锁机信息（新）
 			.use('/ae_cnc/chk_detect/updMacLock', function(req, res, next) {
 				console.log("[修改机台锁机信息]:", req.body);
-				if(req.body && req.body.id) {
-					var sql = 'update mac_lock set mac_code = "' + req.body.mac_code + '",isLock = ' + req.body.isLock + ',isAutoLock = ' + req.body.isAutoLock + ',createTime = "' + req.body.createTime + '",updateTime = "' + req.body.updateTime + '",isDelete = ' + req.body.isDelete + ' WHERE id = "' + req.body.id + '"'
-					common.conQueryData2(sql, res, next());
-					res.end(JSON.stringify({
-						"msg": "更新成功",
-						"code": 200
-					}))
+				if(req.body.length > 0 && req.body[0].id) {
+					for(let i=0;i<req.body.length;i++){
+						let obj = req.body[i];
+						var sql = 'update mac_lock set mac_code = "' + obj.mac_code + '",isLock = ' + obj.isLock + ',isAutoLock = ' + obj.isAutoLock + ',createTime = "' + obj.createTime + 
+						'",updateTime = "' + obj.updateTime + '",isDelete = ' + obj.isDelete + ' WHERE id = "' + obj.id + '"'
+						common.conQueryData2(sql, res, next());
+						res.end(JSON.stringify({
+							"msg": "更新成功",
+							"code": 200
+						}))
+					}
 				}
 				res.end(JSON.stringify({
 					"msg": "_更新成功",
