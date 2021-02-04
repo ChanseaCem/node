@@ -563,7 +563,7 @@ var huijuAll = function() {
 			//2.41 所有在用刀具使用寿命（总次数）列表（新）
 			.use('/ae_cnc/tool/selToolUseLife', function(req, res, next) {
 				console.log("[获取所有在用刀具使用寿命（总次数）列表]:", req.body);
-				var sql = 'SELECT DISTINCT code,useCount FROM `selToolUseLife`';
+				var sql = 'SELECT DISTINCT id,code,useCount FROM `selToolUseLife`';
 				common.conQueryData2(sql, res, next());
 
 			})
